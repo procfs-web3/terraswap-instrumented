@@ -42,6 +42,7 @@ schemars = "0.8.10"
 serde = { version = "1.0.103", default-features = false, features = ["derive"] }
 protobuf = { version = "2", features = ["with-bytes"] }
 cw20 = { version = "0.13.4" }
+minicov = "0.2"
 
 [dev-dependencies]
 cosmwasm-schema = { version = "1.0.0" }

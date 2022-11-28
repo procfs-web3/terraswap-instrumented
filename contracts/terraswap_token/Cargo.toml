@@ -22,12 +22,13 @@ cw0 = { version = "0.10.3" }
 cw2 = { version = "0.13.2" } 
 cw20 = {version = "0.13.2"}
 cw20-base = {version = "0.13.2", features = ["library"]}
-cw-storage-plus  = { version = "0.13.2" } 
+cw-storage-plus  = { version = "0.13.2" }
 cosmwasm-std = { version = "1.0.0" }
 schemars = "0.8.10"
 serde = { version = "1.0.103", default-features = false, features = ["derive"] }
 thiserror = { version = "1.0.20" }
 terraswap = { path = "../../packages/terraswap", default-features = false, version = "2.8.0"}
+minicov = "0.2"
 
 [dev-dependencies]
 # we only need to enable this if we use integration tests

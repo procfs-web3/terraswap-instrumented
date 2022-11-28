@@ -744,3 +744,52 @@ pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, C
 
     Ok(Response::default())
 }
+
+mod memory {
+    use std::convert::TryFrom;
+    use std::mem;
+    use std::vec::Vec;
+
+    #[repr(C)]
+    pub struct Region {
+        /// The beginning of the region expressed as bytes from the beginning of the linear memory
+        pub offset: u32,
+        /// The number of bytes available in this region
+        pub capacity: u32,
+        /// The number of bytes used in this region
+        pub length: u32,
+    }
+
+    pub fn release_buffer(buffer: Vec<u8>) -> *mut Region {
+        let region = build_region(&buffer);
+        mem::forget(buffer);
+        Box::into_raw(region)
+    }
+
+    pub fn build_region(data: &[u8]) -> Box<Region> {
+        let data_ptr = data.as_ptr() as usize;
+        build_region_from_components(
+            u32::try_from(data_ptr).expect("pointer doesn't fit in u32"),
+            u32::try_from(data.len()).expect("length doesn't fit in u32"),
+            u32::try_from(data.len()).expect("length doesn't fit in u32"),
+        )
+    }
+
+    fn build_region_from_components(offset: u32, capacity: u32, length: u32) -> Box<Region> {
+        Box::new(Region {
+            offset,
+            capacity,
+            length,
+        })
+    }
+}
+
+mod coverage {
+    use super::memory::release_buffer;
+    use minicov::capture_coverage;
+    #[no_mangle]
+    extern "C" fn dump_coverage() -> u32 {
+        let coverage = capture_coverage();
+        release_buffer(coverage) as u32
+    }
+}
